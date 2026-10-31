@@ -1,0 +1,77 @@
+name: Label language contributions
+on:
+  workflow_dispatch:
+  issues:
+    types: [opened, edited, reopened]
+  pull_request_target:
+    types: [opened, reopened, synchronize, ready_for_review]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  labels:
+    name: Create and apply language labels
+    runs-on: ubuntu-latest
+    steps:
+      # SECURITY: pull_request_target intentionally does not check out PR code,
+      # run a fork's script, or consume PR-provided commands.
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const predefined = [
+              ["type:translation","5319E7","Translated interface text"],
+              ["type:language-request","0075CA","Request for a new language"],
+              ["type:translation-bug","D73A4A","Incorrect or missing translation"],
+              ["area:studio","1D76DB","Paglora Desktop interface"],
+              ["area:site","0E8A16","Generated website interface"],
+              ["area:docs","FBCA04","Built-in documentation component text"],
+              ["status:review","C2E0C6","Translation awaiting native-language review"],
+              ["status:partial","F9D0C4","Partial language coverage"]
+            ];
+            const ensure = async(name,color,description) => {
+              try {
+                await github.rest.issues.createLabel({owner,repo,name,color,description});
+              } catch(error) {
+                if (error.status !== 422) throw error; // already exists
+              }
+            };
+            for (const [name,color,description] of predefined) await ensure(name,color,description);
+            if (context.eventName === "workflow_dispatch") return;
+            const labels = new Set();
+            let locale = null;
+            if (context.eventName === "issues") {
+              const issue = context.payload.issue;
+              if (issue.title.startsWith("[Language]")) labels.add("type:language-request");
+              else labels.add("type:translation-bug");
+              const match = /(?:^|\n)### Locale code\s*\n+([a-z]{2}(?:-[A-Z]{2})?)(?:\r?\n|$)/.exec(issue.body || "");
+              if (match) locale = match[1];
+              if (issue.body?.includes("Studio UI")) labels.add("area:studio");
+              if (issue.body?.includes("Generated website")) labels.add("area:site");
+              if (issue.body?.includes("Both")) {labels.add("area:studio"); labels.add("area:site");}
+            } else {
+              labels.add("type:translation");
+              labels.add("status:review");
+              const files = await github.paginate(github.rest.pulls.listFiles,{
+                owner,repo,pull_number:context.issue.number,per_page:100
+              });
+              for (const file of files) {
+                const match = /^locales\/([a-z]{2}(?:-[A-Z]{2})?)\.json$/.exec(file.filename);
+                if (match) locale ??= match[1];
+                if (file.filename.startsWith("locales/")) {
+                  labels.add("area:studio");labels.add("area:site");labels.add("area:docs");
+                }
+              }
+            }
+            if (locale && /^[a-z]{2}(?:-[A-Z]{2})?$/.test(locale)) {
+              const label = "language:" + locale;
+              await ensure(label,"BFD4F2","Localization: " + locale);
+              labels.add(label);
+            }
+            if (labels.size) await github.rest.issues.addLabels({
+              owner,repo,issue_number:context.issue.number,labels:[...labels]
+            });
