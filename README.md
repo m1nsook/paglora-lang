@@ -18,9 +18,9 @@
 
 1. [Check existing languages](locales/) or [open a language request](https://github.com/m1nsook/paglora-lang/issues/new/choose) to coordinate. You don't need approval before contributing.
 2. **Fork** this repository using GitHub's Fork button, then make your changes in your fork using GitHub Desktop or the GitHub web editor.
-3. Copy `locales/en.json` to a valid BCP-47 filename such as `locales/fr.json` or `locales/pt-BR.json`. Keep `schemaVersion`, every message key, and placeholders like `{date}`. Translate **values**, not keys.
+3. **Recommended:** run `node scripts/new-locale.mjs fr "Français" "French"` (replace code and names). For right-to-left languages, add `rtl` as the fourth argument. This creates a **blank** catalog so you copy only the keys you intend to translate from `locales/en.json`. Alternatively, copy English to `locales/fr.json` and remove untranslated values. Translate **values**, not keys; preserve placeholders like `{date}`.
 4. Set `locale`, `nativeName`, `englishName`, and `direction` (`ltr` or `rtl`). You may translate only the keys you can review: missing keys fall back to English. **Remove untranslated English entries** from partial locale files instead of leaving them as fake translations.
-5. Run `node scripts/validate.mjs` and `node --test` with Node.js 20+ (or let CI validate your PR).
+5. Run `node scripts/validate.mjs`, `node scripts/coverage.mjs`, and `node --test` with Node.js 20+ (or let CI validate your PR). Catalog coverage is **not** equivalent to complete product localization.
 6. Open a **pull request from your fork to this repository's `main`**. Describe the language, native-language review, and what remains untranslated. CI checks every PR. Maintainers review and merge.
 
 **Use pull requests for submissions—not issue comments linking forks.** Issues are for language requests, terminology questions, coordination, and bug reports. If GitHub blocks your PR, link your fork in an issue only as a fallback.
