@@ -2,6 +2,10 @@
 
 Thank you for helping localize Paglora. Please contribute through a GitHub **pull request** from your fork, not as a downloadable ZIP attached to an issue.
 
+## New-language starter
+
+From your fork, run `node scripts/new-locale.mjs fr "Français" "French"` to create `locales/fr.json` with an empty `messages` map. To use right-to-left text metadata, append `rtl` as the fourth argument, for example for Arabic. Copy only the keys you can translate from `locales/en.json`, then run `node scripts/validate.mjs` and `node scripts/coverage.mjs`. Missing keys fall back to English. Do **not** submit an empty pack as a complete translation.
+
 ## Checklist
 
 - [ ] My locale uses a valid `ll` or `ll-RR` language code and correctly declares text direction.
