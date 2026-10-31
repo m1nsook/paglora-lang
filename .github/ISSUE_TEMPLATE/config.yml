@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Paglora application bugs
+    url: https://github.com/m1nsook/paglora/issues
+    about: Report bugs unrelated to translation in the main application repository.

@@ -1,0 +1,35 @@
+name: Language request
+description: Propose a language or coordinate translation work
+title: "[Language] "
+labels: []
+body:
+  - type: input
+    id: locale
+    attributes:
+      label: Locale code
+      description: Use e.g. fr, de, pt-BR, zh-TW
+      placeholder: fr
+    validations:
+      required: true
+  - type: input
+    id: native
+    attributes:
+      label: Native language name
+      placeholder: Français
+    validations:
+      required: true
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Translation area
+      options:
+        - Studio UI
+        - Generated website
+        - Both
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Notes and contributors
+      description: Include terminology concerns, questions, or collaborators. Submit actual JSON translations by PR.

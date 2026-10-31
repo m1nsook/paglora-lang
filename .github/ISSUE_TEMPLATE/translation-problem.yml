@@ -1,0 +1,23 @@
+name: Translation problem
+description: Report an incorrect or missing phrase
+title: "[Translation] "
+labels: []
+body:
+  - type: input
+    id: locale
+    attributes:
+      label: Locale code
+      placeholder: pl
+    validations:
+      required: true
+  - type: input
+    id: key
+    attributes:
+      label: Message key (if known)
+      placeholder: studio.settings.title
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is wrong, and how should it be translated?
+    validations:
+      required: true
